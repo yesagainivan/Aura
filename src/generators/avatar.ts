@@ -3,6 +3,7 @@ import { generatePalette } from '../core/colors';
 import { generateGeometric } from './styles/geometric';
 import { generateGradient } from './styles/gradient';
 import { generateRetro } from './styles/retro';
+import { generateBrutalist } from './styles/brutalist';
 import { AvatarOptions } from './types';
 import { createSvg } from './utils';
 
@@ -11,7 +12,10 @@ import { createSvg } from './utils';
  */
 export function generateAvatar(input: string, options: AvatarOptions = {}): string {
     const hash = getHash(input);
-    const palette = options.palette || generatePalette(hash);
+    const palette = options.palette || generatePalette(hash, {
+        colorMode: options.colorMode,
+        primaryHex: options.primaryColor
+    });
     const size = options.size || 80;
     const variant = options.variant || 'geometric';
 
@@ -28,6 +32,9 @@ export function generateAvatar(input: string, options: AvatarOptions = {}): stri
             break;
         case 'geometric':
             svgContent = generateGeometric(hash, palette, size);
+            break;
+        case 'brutalist':
+            svgContent = generateBrutalist(hash, palette, size);
             break;
         default:
             svgContent = generateGeometric(hash, palette, size);

@@ -11,6 +11,7 @@ export interface AuraCardProps {
     // Make card options flatter if desired, or pass as object
     avatarSize?: number;
     avatarStyle?: AvatarStyle; // Renamed type usage here too for clarity
+    avatarOptions?: import('../generators/types').AvatarOptions; // Allow full pass-through
 }
 
 export const AuraCard: React.FC<AuraCardProps> = ({
@@ -20,7 +21,8 @@ export const AuraCard: React.FC<AuraCardProps> = ({
     theme,
     className,
     avatarSize,
-    avatarStyle
+    avatarStyle,
+    avatarOptions
 }) => {
     const html = React.useMemo(() => {
         const profile: ProfileData = { username, bio, tags };
@@ -28,11 +30,12 @@ export const AuraCard: React.FC<AuraCardProps> = ({
             theme,
             avatarOptions: {
                 size: avatarSize,
-                variant: avatarStyle // Use variant
+                variant: avatarStyle, // Use variant
+                ...avatarOptions // Merge full options
             }
         };
         return generateProfileCard(profile, options);
-    }, [username, bio, tags, theme, avatarSize, avatarStyle]);
+    }, [username, bio, tags, theme, avatarSize, avatarStyle, avatarOptions]);
 
     return (
         <div

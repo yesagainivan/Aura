@@ -8,12 +8,14 @@ import { getTheme, ThemeMode } from './theme';
 const ADJECTIVES = [
     'Swift', 'Cosmic', 'Happy', 'Neon', 'Brave',
     'Calm', 'Wild', 'Silent', 'Rapid', 'Grand',
-    'Pixel', 'Solar', 'Lunar', 'Hyper', 'Noble'
+    'Pixel', 'Solar', 'Lunar', 'Hyper', 'Noble',
+    'Attentive', 'Quick', 'Bald', 'Bold', 'Gentle',
 ];
 const NOUNS = [
     'Panda', 'Coder', 'Star', 'Wolf', 'Eagle',
     'Orbit', 'Flux', 'Echo', 'Tiger', 'Nova',
-    'Rider', 'Falcon', 'Hawk', 'Lion', 'Bear'
+    'Rider', 'Falcon', 'Hawk', 'Lion', 'Bear',
+    'People', 'Person', 'Human', 'Bot', 'AI',
 ];
 
 const getRandomName = () => {
@@ -34,6 +36,23 @@ export default function App() {
     const [tags, setTags] = useState('Design, Aura, React');
     const [variant, setVariant] = useState<AvatarStyle>('geometric');
     const [cardTheme, setCardTheme] = useState<'light' | 'dark'>('light');
+
+    // Customization State
+    const [userColorMode, setUserColorMode] = useState<'auto' | 'light' | 'dark'>('auto');
+    const [userPrimaryColor, setUserPrimaryColor] = useState<string>(''); // Empty = auto
+
+    // Preset Colors
+    const PRESET_COLORS = [
+        { name: 'Auto', value: '' },
+        { name: 'Crimson', value: '#DC143C' },
+        { name: 'Azure', value: '#007FFF' },
+        { name: 'Emerald', value: '#50C878' },
+        { name: 'Gold', value: '#FFD700' },
+        { name: 'Purple', value: '#800080' },
+        { name: 'Teal', value: '#008080' },
+        { name: 'Orange', value: '#FFA500' },
+        { name: 'Pink', value: '#FFC0CB' },
+    ];
 
     // View State
     const [viewMode, setViewMode] = useState<'card' | 'avatar'>('card');
@@ -111,7 +130,7 @@ export default function App() {
                     <section>
                         <label style={{ ...labelStyle, color: t.secondaryText }}>Style</label>
                         <div style={{ display: 'flex', gap: '4px', background: t.bg, padding: 4, borderRadius: 10, border: `1px solid ${t.border}` }}>
-                            {(['geometric', 'gradient', 'retro'] as const).map(s => (
+                            {(['geometric', 'gradient', 'retro', 'brutalist'] as const).map(s => (
                                 <button
                                     key={s}
                                     onClick={() => setVariant(s)}
@@ -143,6 +162,55 @@ export default function App() {
                                 onChange={e => setTags(e.target.value)}
                                 placeholder="Tags (comma separated)"
                             />
+                        </div>
+                    </section>
+
+                    <section>
+                        <label style={{ ...labelStyle, color: t.secondaryText }}>Customization</label>
+
+                        {/* Palette Mode */}
+                        <div style={{ marginBottom: '12px' }}>
+                            <div style={{ fontSize: '11px', fontWeight: 600, color: t.secondaryText, marginBottom: '6px' }}>PALETTE MODE</div>
+                            <div style={{ display: 'flex', gap: '4px', background: t.bg, padding: 4, borderRadius: 10, border: `1px solid ${t.border}` }}>
+                                {(['auto', 'light', 'dark'] as const).map((m) => (
+                                    <button
+                                        key={m}
+                                        onClick={() => setUserColorMode(m)}
+                                        style={{
+                                            ...chipStyle,
+                                            background: userColorMode === m ? t.accent : 'transparent',
+                                            color: userColorMode === m ? t.accentText : t.secondaryText,
+                                            boxShadow: userColorMode === m ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
+                                        }}
+                                    >
+                                        {m}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Brand Color */}
+                        <div>
+                            <div style={{ fontSize: '11px', fontWeight: 600, color: t.secondaryText, marginBottom: '6px' }}>BRAND COLOR</div>
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                {PRESET_COLORS.map(c => (
+                                    <button
+                                        key={c.name}
+                                        onClick={() => setUserPrimaryColor(c.value)}
+                                        title={c.name}
+                                        style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            borderRadius: '50%',
+                                            border: userPrimaryColor === c.value ? `2px solid ${t.text}` : `1px solid ${t.border}`,
+                                            background: c.value || `conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`,
+                                            cursor: 'pointer',
+                                            position: 'relative',
+                                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                                        }}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </section>
 
@@ -223,6 +291,10 @@ export default function App() {
                                 tags={tagList}
                                 theme={cardTheme}
                                 avatarStyle={variant}
+                                avatarOptions={{
+                                    colorMode: userColorMode === 'auto' ? undefined : userColorMode,
+                                    primaryColor: userPrimaryColor || undefined
+                                }}
                             />
                         </div>
                     ) : (
@@ -241,7 +313,13 @@ export default function App() {
                                 borderRadius: '50%',
                                 lineHeight: 0
                             }}>
-                                <AuraAvatar username={username} variant={variant} size={180} />
+                                <AuraAvatar
+                                    username={username}
+                                    variant={variant}
+                                    size={180}
+                                    colorMode={userColorMode === 'auto' ? undefined : userColorMode}
+                                    primaryColor={userPrimaryColor || undefined}
+                                />
                             </div>
                             <code style={{ fontSize: '12px', color: t.secondaryText, fontFamily: 'monospace' }}>
                                 {`<AuraAvatar username="${username}" variant="${variant}" />`}

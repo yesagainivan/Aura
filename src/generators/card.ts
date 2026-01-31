@@ -17,7 +17,12 @@ export interface CardOptions {
 export function generateProfileCard(profile: ProfileData, options: CardOptions = {}): string {
   const { username, bio, tags = [] } = profile;
   const hash = getHash(username);
-  const palette = options.avatarOptions?.palette || generatePalette(hash);
+
+  const avOptions = options.avatarOptions || {};
+  const palette = avOptions.palette || generatePalette(hash, {
+    colorMode: avOptions.colorMode,
+    primaryHex: avOptions.primaryColor
+  });
 
   // Use avatar engine
   const avatarSvg = generateAvatar(username, options.avatarOptions);

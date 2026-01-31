@@ -1,12 +1,15 @@
 import { Palette } from '../core/colors';
 
-export type AvatarStyle = 'geometric' | 'gradient' | 'retro';
+export type AvatarStyle = 'geometric' | 'gradient' | 'retro' | 'brutalist';
 
 export interface AvatarOptions {
     size?: number;
     variant?: AvatarStyle;
     // If provided, overrides the deterministic palette selection
     palette?: Palette;
+    // User preferences
+    colorMode?: 'light' | 'dark';
+    primaryColor?: string; // Hex code
 }
 
 export interface GeneratorResult {
