@@ -1,0 +1,21 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Aura: Negative Space Identity Logo -->
+  
+  <defs>
+    <!-- The Mask: White = Reveal, Black = Hide -->
+    <mask id="aura-cut">
+       <rect width="256" height="256" fill="white" />
+       <!-- The Negative Space Cut: An offset circle -->
+       <circle cx="160" cy="96" r="80" fill="black" />
+    </mask>
+  </defs>
+
+  <!-- The Core Presence (Orange) -->
+  <!-- Masked to create the crescent/arch shape -->
+  <circle cx="128" cy="128" r="112" fill="#ffc337" mask="url(#aura-cut)" />
+
+  <!-- The Spark (The 'Aura' or Spirit) floating in the void -->
+  <!-- Hot Pink for contrast -->
+  <circle cx="160" cy="96" r="32" fill="#7eb7c6" />
+  
+</svg>
