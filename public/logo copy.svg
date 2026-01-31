@@ -1,0 +1,19 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Aura: Geometric Identity Engine Logo -->
+  <!-- Bg -->
+  <rect width="256" height="256" fill="#F4F4F5" rx="32" />
+  
+  <!-- Grid: 2x2. Cell Size 128 -->
+  <!-- Top Left: Quarter Arc (The "A" arch feeling) -->
+  <path d="M0 0 L128 0 A128 128 0 0 1 0 128 Z" fill="#6366F1" transform="translate(64, 64) rotate(0 64 64)" />
+  
+  <!-- Bottom Right: Circle (Unity/Core) -->
+  <!-- <circle cx="192" cy="192" r="64" fill="#EC4899" /> -->
+  <circle cx="192" cy="192" r="16" fill="#EC4899" />
+
+  <!-- Top Right: Small Eye/Dot (Identity) -->
+  <circle cx="192" cy="64" r="32" fill="#10B981" />
+
+  <!-- Bottom Left: Triangle (Direction/Action) -->
+  <path d="M0 128 L128 128 L0 0 Z" fill="#F59E0B" transform="translate(64, 192) scale(1, -1)" />
+</svg>

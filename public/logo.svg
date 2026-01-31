@@ -1,0 +1,19 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Aura: The Focus (Warm & Elegant) -->
+  
+  <defs>
+    <!-- Negative Space Mask -->
+    <mask id="lens-cut">
+       <rect width="256" height="256" fill="white" />
+       <!-- Central Void -->
+       <circle cx="128" cy="128" r="64" fill="black" />
+    </mask>
+  </defs>
+
+  <!-- The Body: Warm Burnt Orange Squircle -->
+  <rect x="16" y="16" width="224" height="224" rx="32" fill="#EA580C" mask="url(#lens-cut)" />
+
+  <!-- The Spirit: A Golden Core floating in the negative space -->
+  <!-- Slightly offset for "gaze" or "direction" -->
+  <circle cx="128" cy="128" r="24" fill="#fbaf2b" />
+</svg>
