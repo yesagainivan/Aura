@@ -1,30 +1,33 @@
 import { Palette } from '../../core/colors';
 import { getSeededRandom } from '../utils';
 
-export function generateRetro(hash: number, palette: Palette): string {
-    const size = 5; // 5x5 grid
-    const cellSize = 80 / size; // Viewbox is 80x80
-    const color = palette.colors[palette.colors.length - 1]; // Use a strong color
+export function generateRetro(hash: number, palette: Palette, size: number): string {
+    // 5x5 Grid (GitHub Identicon style)
+    // Mirror vertically
+    const gridSize = 5;
+    const cellSize = size / gridSize;
+
+    // Use Primary for the pattern, on the generated Background
+    const color = palette.primary;
+    const bg = palette.background;
 
     let rects = '';
 
-    // Fill background with light color
-    rects += `<rect width="100%" height="100%" fill="${palette.background}" />`;
+    // Draw background
+    rects += `<rect width="${size}" height="${size}" fill="${bg}" />`;
 
-    for (let row = 0; row < size; row++) {
-        for (let col = 0; col < Math.ceil(size / 2); col++) {
-            // Deterministic check if cell is active
-            // Using bits from hash or pseudo random
-            // seed logic: hash + position
-            const isFilled = getSeededRandom(hash + row * size + col) > 0.5;
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < Math.ceil(gridSize / 2); col++) {
+            // Deterministic ON/OFF
+            const isFilled = getSeededRandom(hash + row * gridSize + col) > 0.5;
 
             if (isFilled) {
-                // Draw left side
+                // Left side
                 rects += `<rect x="${col * cellSize}" y="${row * cellSize}" width="${cellSize}" height="${cellSize}" fill="${color}" />`;
 
-                // Mirror to right side if not center column or if size is even (not here)
-                if (col < Math.floor(size / 2)) {
-                    const mirrorCol = size - 1 - col;
+                // Mirror right side
+                if (col < Math.floor(gridSize / 2)) {
+                    const mirrorCol = gridSize - 1 - col;
                     rects += `<rect x="${mirrorCol * cellSize}" y="${row * cellSize}" width="${cellSize}" height="${cellSize}" fill="${color}" />`;
                 }
             }

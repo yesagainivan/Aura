@@ -1,5 +1,5 @@
 import { getHash } from '../core/hash';
-import { getPalette } from '../core/colors';
+import { generatePalette } from '../core/colors';
 import { generateGeometric } from './styles/geometric';
 import { generateGradient } from './styles/gradient';
 import { generateRetro } from './styles/retro';
@@ -11,28 +11,28 @@ import { createSvg } from './utils';
  */
 export function generateAvatar(input: string, options: AvatarOptions = {}): string {
     const hash = getHash(input);
-    const palette = options.palette || getPalette(hash);
-
+    const palette = options.palette || generatePalette(hash);
+    const size = options.size || 80;
     const variant = options.variant || 'geometric';
 
     let svgContent = '';
-    // ViewBox is fixed to 80x80 for all generators
-    const viewBox = '0 0 80 80';
+    // ViewBox must match the size used for generation to ensure shapes are visible
+    const viewBox = `0 0 ${size} ${size}`;
 
     switch (variant) {
         case 'gradient':
             svgContent = generateGradient(hash, palette);
             break;
         case 'retro':
-            svgContent = generateRetro(hash, palette);
+            svgContent = generateRetro(hash, palette, size);
             break;
         case 'geometric':
+            svgContent = generateGeometric(hash, palette, size);
+            break;
         default:
-            // For geometric, we might want a background color too
-            svgContent = `<rect width="100%" height="100%" fill="${palette.background}" />` +
-                generateGeometric(hash, palette);
+            svgContent = generateGeometric(hash, palette, size);
             break;
     }
 
-    return createSvg(svgContent, options.size || 80, viewBox);
+    return createSvg(svgContent, size, viewBox);
 }

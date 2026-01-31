@@ -1,45 +1,50 @@
 import { Palette } from '../../core/colors';
-import { getShapeType, pseudoRandom } from '../../core/geometry';
+import { getShapeType } from '../../core/geometry';
 import { getSeededRandom } from '../utils';
 
-export function generateGeometric(hash: number, palette: Palette): string {
+export function generateGeometric(hash: number, palette: Palette, size: number): string {
+    // Use semantic colors instead of random array access
+    // We have: primary, secondary, accent, text, background
+    const colors = [palette.primary, palette.secondary, palette.accent];
+
     let content = '';
-    // Deterministic number of shapes (3 to 6)
-    const numShapes = 3 + Math.floor(getSeededRandom(hash) * 4);
+    // Background fill
+    content += `<rect width="${size}" height="${size}" fill="${palette.background}" />`;
+
+    const numShapes = 3 + Math.floor(getSeededRandom(hash) * 3); // 3-5 shapes
 
     for (let i = 0; i < numShapes; i++) {
-        // Re-hash for each shape to get different properties
-        const shapeHash = (hash + i * 123456) | 0;
+        const shapeHash = hash + i * 123;
         const shapeType = getShapeType(shapeHash);
 
-        // Pick a color from palette
-        const colorIndex = Math.floor(getSeededRandom(shapeHash) * palette.colors.length);
-        const color = palette.colors[colorIndex];
+        // Pick color from our semantic trio
+        const colorIndex = Math.floor(getSeededRandom(shapeHash + 1) * colors.length);
+        const color = colors[colorIndex];
 
-        // Position and size (viewbox is 0-80)
-        const x = pseudoRandom(shapeHash, 0, 80);
-        const y = pseudoRandom(shapeHash + 1, 0, 80);
-        const size = pseudoRandom(shapeHash + 2, 10, 40);
-
-        // Opacity for layering effect
-        const opacity = 0.5 + pseudoRandom(shapeHash + 3, 0, 0.5);
+        const x = getSeededRandom(shapeHash + 2) * size;
+        const y = getSeededRandom(shapeHash + 3) * size;
+        const shapeSize = 10 + getSeededRandom(shapeHash + 4) * (size / 2); // 10 to half-size
+        const opacity = 0.5 + getSeededRandom(shapeHash + 5) * 0.5; // 0.5 - 1.0
 
         switch (shapeType) {
             case 'circle':
-                content += `<circle cx="${x}" cy="${y}" r="${size / 2}" fill="${color}" opacity="${opacity}" />`;
+                content += `<circle cx="${x}" cy="${y}" r="${shapeSize / 2}" fill="${color}" opacity="${opacity}" />`;
                 break;
             case 'square':
-                content += `<rect x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" fill="${color}" opacity="${opacity}" rx="${size / 4}" />`;
+                content += `<rect x="${x - shapeSize / 2}" y="${y - shapeSize / 2}" width="${shapeSize}" height="${shapeSize}" fill="${color}" opacity="${opacity}" rx="${shapeSize / 4}" />`; // Soft squares
                 break;
-            case 'triangle': {
-                const half = size / 2;
-                // Simple distinct triangle
-                const points = `${x},${y - half} ${x - half},${y + half} ${x + half},${y + half}`;
-                content += `<polygon points="${points}" fill="${color}" opacity="${opacity}" />`;
+            case 'triangle':
+                // Simple triangle
+                const h = shapeSize * (Math.sqrt(3) / 2);
+                const p1 = `${x},${y - h / 2}`;
+                const p2 = `${x - shapeSize / 2},${y + h / 2}`;
+                const p3 = `${x + shapeSize / 2},${y + h / 2}`;
+                content += `<polygon points="${p1} ${p2} ${p3}" fill="${color}" opacity="${opacity}" />`;
                 break;
-            }
             case 'ring':
-                content += `<circle cx="${x}" cy="${y}" r="${size / 2}" fill="none" stroke="${color}" stroke-width="${size / 6}" opacity="${opacity}" />`;
+                content += `
+          <circle cx="${x}" cy="${y}" r="${shapeSize / 2}" stroke="${color}" stroke-width="${shapeSize / 5}" fill="none" opacity="${opacity}" />
+        `;
                 break;
         }
     }
