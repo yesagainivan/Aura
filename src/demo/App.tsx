@@ -29,8 +29,8 @@ export default function App() {
     const isDark = mode === 'dark';
 
     // Editor State
-    const [username, setUsername] = useState('CosmicCoder');
-    const [bio, setBio] = useState('Building digital auras.');
+    const [username, setUsername] = useState('NobleOrbit');
+    const [bio, setBio] = useState('Building digital auras. Try NeonHawk');
     const [tags, setTags] = useState('Design, Aura, React');
     const [variant, setVariant] = useState<AvatarStyle>('geometric');
     const [cardTheme, setCardTheme] = useState<'light' | 'dark'>('light');
