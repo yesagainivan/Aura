@@ -27,6 +27,13 @@
   "author": "Ivan Owono",
   "license": "MIT",
   "description": "The Generative Identity Engine for Modern Apps",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yesagainivan/Aura.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/node": "^25.1.0",
     "@types/react": "^19.2.10",
@@ -40,6 +47,7 @@
     "prettier": "^3.8.1",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.18"
   },
   "dependencies": {
