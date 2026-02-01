@@ -1,5 +1,5 @@
 {
-  "name": "aura",
+  "name": "@yesagainivan/aura",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
