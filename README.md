@@ -29,9 +29,7 @@ It goes beyond simple random colors—it uses a **Bauhaus-inspired** composition
 ## 📦 Installation
 
 ```bash
-npm install @aura/core
-# or
-npm install @aura/react
+npm install @yesagainivan/aura
 ```
 
 ## 🚀 Usage
@@ -39,7 +37,7 @@ npm install @aura/react
 ### React Component
 
 ```tsx
-import { AuraAvatar, AuraCard } from '@aura/react';
+import { AuraAvatar, AuraCard } from '@yesagainivan/aura';
 
 // Simple Avatar
 <AuraAvatar 
@@ -79,7 +77,7 @@ Aura allows you to override the generative engine to match your app's branding w
 Returns an SVG string.
 
 ```ts
-import { generateAvatar } from '@aura/core';
+import { generateAvatar } from '@yesagainivan/aura';
 
 const svg = generateAvatar('user-id-123', {
   variant: 'brutalist',
@@ -89,4 +87,4 @@ const svg = generateAvatar('user-id-123', {
 
 ## 📜 License
 
-MIT © 2026 CosmicLabels
+MIT © 2026 Ivan Owono
