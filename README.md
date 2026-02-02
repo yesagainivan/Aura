@@ -6,7 +6,7 @@
 
 It goes beyond simple random colors—it uses a **Bauhaus-inspired** composition engine and **Harmonic Color Math** to ensure every generated avatar looks professionally designed.
 
-![Aura Banner](https://placeholder.com)
+![Aura Banner](https://raw.githubusercontent.com/yesagainivan/Aura/main/public/banner.webp)
 
 ## ✨ Features
 
