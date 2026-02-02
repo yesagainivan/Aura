@@ -1,0 +1,133 @@
+import { Palette } from '../../core/colors';
+import { getSeededRandom } from '../utils';
+
+// Extracted paths from the Elegance.svg reference.
+// These are normalized to a roughly 0-100 coordinate system relative to their own center for easier composition.
+const ELEGANT_PATHS = [
+    // 1. Fleur-de-lis / Royal ornament style
+    {
+        d: "M50 85 C48 85 46.5 84.5 45.5 83.5 C41 79 46 67 56 57 C66 47 78 42 82 46 C84 48 84 52 82 57 C80 62 76 67 71 72 M78 45 C73 45 64 50 56 57 C46 67 41 79 45 83 C49 87 60 82 70 72 C75 67 79 62 81 57 C83 52 83 48 81 46 C79 44 78 45 78 45 Z",
+        viewBox: "0 0 100 100",
+        type: "ornament"
+    },
+    // 2. Wing/Leaf shape
+    {
+        d: "M80 50 C78 50 76 50 74 50 C63 49 49 47 34 44 C7 38 -20 28 -21 22 C-20 19 -12 18 -5 18 C-5 18 -5 18 -5 18 C-18 18 -20 20 -20 21 C-21 25 0 35 33 42 C47 45 61 47 72 48 C82 49 88 48 89 46 C89 44 86 41 79 38",
+        viewBox: "-25 0 120 60", // Rough approximation
+        type: "wing"
+    },
+    // 3. Swirl
+    {
+        d: "M50 50 C40 50 30 40 30 30 C30 20 40 10 50 10 C60 10 70 20 70 30 C70 40 60 50 50 50 Z M50 20 C45 20 40 25 40 30 C40 35 45 40 50 40 C55 40 60 35 60 30 C60 25 55 20 50 20 Z",
+        viewBox: "0 0 100 100",
+        type: "swirl"
+    }
+];
+
+export function generateElegance(hash: number, palette: Palette, size: number): string {
+    // Strategy:
+    // 1. Determine Composition (Radial Bloom, Emblem, or Pattern)
+    // 2. Select Elements (Procedural or Extracted Assets)
+    // 3. Render with high-quality transforms
+
+    const center = size / 2;
+    const strokeWidth = Math.max(1, size / 120);
+    const compositionType = getSeededRandom(hash) > 0.4 ? 'radial' : 'emblem';
+
+    let content = '';
+
+    // -- Background --
+    content += `<rect width="${size}" height="${size}" fill="${palette.background}" />`;
+
+    // -- Layer 1: Texture/Subtle Pattern (Implementation Quality: Delight) --
+    // A very subtle ring or cross
+    if (getSeededRandom(hash + 1) > 0.5) {
+        content += `<circle cx="${center}" cy="${center}" r="${size * 0.4}" fill="none" stroke="${palette.text}" stroke-width="${strokeWidth * 0.5}" opacity="0.1" />`;
+    }
+
+    // -- Layer 2: Main Motif --
+
+    if (compositionType === 'radial') {
+        // RADIAL BLOOM (Procedural or Asset-based)
+        const petals = 6 + Math.floor(getSeededRandom(hash + 2) * 3) * 2; // 6, 8, 10
+        const radius = size * 0.35;
+
+        // Procedural Petal Path
+        const tipY = -radius;
+        const cpW = radius * (0.2 + getSeededRandom(hash + 3) * 0.3);
+        const cpH = radius * (0.3 + getSeededRandom(hash + 4) * 0.3);
+        const d = `M 0 0 C ${cpW} ${-cpH}, ${cpW} ${tipY + cpH}, 0 ${tipY} C ${-cpW} ${tipY + cpH}, ${-cpW} ${-cpH}, 0 0`;
+
+        const groupContent = [];
+        const useFill = getSeededRandom(hash + 5) > 0.3;
+
+        for (let i = 0; i < petals; i++) {
+            const angle = (360 / petals) * i;
+            const color = (i % 2 === 0) ? palette.primary : palette.accent;
+
+            groupContent.push(`
+                <g transform="rotate(${angle})">
+                    <path d="${d}" fill="${useFill ? color : 'none'}" fill-opacity="0.2" stroke="${color}" stroke-width="${strokeWidth}" />
+                </g>
+            `);
+        }
+
+        // Center Piece
+        groupContent.push(`<circle cx="0" cy="0" r="${size * 0.05}" fill="${palette.secondary}" />`);
+
+        content += `<g transform="translate(${center}, ${center})">${groupContent.join('')}</g>`;
+
+    } else {
+        // EMBLEM (Asset-based)
+        // Use one of the predefined shapes
+        const shapeIdx = Math.floor(getSeededRandom(hash + 6) * ELEGANT_PATHS.length);
+        const shape = ELEGANT_PATHS[shapeIdx];
+
+        // We typically want to mirror these or arrange them
+        // Let's create a symmetrical emblem: 4 copies rotated 90deg, or 2 mirrored
+        const symmetry = getSeededRandom(hash + 7) > 0.5 ? 4 : 2;
+        const scale = (size * 0.25) / 50; // Normalize approx 100px shape to quarter size
+        const offset = size * 0.1;
+
+        const groupContent = [];
+
+        for (let k = 0; k < symmetry; k++) {
+            const angle = (360 / symmetry) * k;
+            groupContent.push(`
+                <g transform="rotate(${angle}) translate(0, ${-offset}) scale(${scale})">
+                    <path d="${shape.d}" fill="${palette.primary}" fill-opacity="0.9" stroke="${palette.text}" stroke-width="1" />
+                </g>
+            `);
+        }
+
+        // Add a central anchor
+        if (symmetry === 4) {
+            groupContent.push(`<circle cx="0" cy="0" r="${size * 0.08}" fill="none" stroke="${palette.accent}" stroke-width="${strokeWidth * 2}" />`);
+        }
+
+        content += `<g transform="translate(${center}, ${center})">${groupContent.join('')}</g>`;
+    }
+
+    // -- Layer 3: Frame / Border (Polished look) --
+    const frameType = Math.floor(getSeededRandom(hash + 8) * 3);
+    if (frameType === 0) {
+        // Double Ring
+        content += `
+            <circle cx="${center}" cy="${center}" r="${size * 0.48}" fill="none" stroke="${palette.text}" stroke-width="${strokeWidth}" opacity="0.5" />
+            <circle cx="${center}" cy="${center}" r="${size * 0.46}" fill="none" stroke="${palette.text}" stroke-width="${strokeWidth * 0.5}" opacity="0.3" />
+        `;
+    } else if (frameType === 1) {
+        // Corner accents
+        const cLen = size * 0.1;
+        const cInset = size * 0.05;
+        const corners = [
+            `M ${cInset} ${cInset + cLen} L ${cInset} ${cInset} L ${cInset + cLen} ${cInset}`, // TL
+            `M ${size - cInset - cLen} ${cInset} L ${size - cInset} ${cInset} L ${size - cInset} ${cInset + cLen}`, // TR
+            `M ${size - cInset} ${size - cInset - cLen} L ${size - cInset} ${size - cInset} L ${size - cInset - cLen} ${size - cInset}`, // BR
+            `M ${cInset + cLen} ${size - cInset} L ${cInset} ${size - cInset} L ${cInset} ${size - cInset - cLen}` // BL
+        ];
+        content += corners.map(d => `<path d="${d}" fill="none" stroke="${palette.secondary}" stroke-width="${strokeWidth * 1.5}" />`).join('');
+    }
+
+    return content;
+}

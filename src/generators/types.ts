@@ -1,6 +1,6 @@
 import { Palette } from '../core/colors';
 
-export type AvatarStyle = 'geometric' | 'gradient' | 'retro' | 'brutalist';
+export type AvatarStyle = 'geometric' | 'gradient' | 'retro' | 'brutalist' | 'elegance';
 
 export interface AvatarOptions {
     size?: number;

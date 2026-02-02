@@ -80,3 +80,10 @@ export const BrutalistIcon: React.FC<IconProps> = ({ size = 20, className }) => 
         <rect x="8" y="4" width="14" height="14" strokeWidth="2" />
     </svg>
 );
+
+export const EleganceIcon: React.FC<IconProps> = ({ size = 20, className }) => (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2c0 5 5 5 5 10s-5 10-5 10s-5 -5-5 -10s5 -5 5 -10" />
+        <circle cx="12" cy="12" r="3" />
+    </svg>
+);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AuraAvatar, AuraCard } from '../react';
 import { AvatarStyle } from '../generators/types';
-import { SunIcon, MoonIcon, RefreshIcon, DiceIcon, GeometricIcon, GradientIcon, RetroIcon, BrutalistIcon } from './icons';
+import { SunIcon, MoonIcon, RefreshIcon, DiceIcon, GeometricIcon, GradientIcon, RetroIcon, BrutalistIcon, EleganceIcon } from './icons';
 import { getTheme, ThemeMode } from './theme';
 
 // Expanded Name Lists for diversity (15x15 = 225 combinations)
@@ -171,7 +171,8 @@ export default function App() {
                                     { id: 'geometric', icon: GeometricIcon, label: 'Geometric' },
                                     { id: 'gradient', icon: GradientIcon, label: 'Gradient' },
                                     { id: 'retro', icon: RetroIcon, label: 'Retro' },
-                                    { id: 'brutalist', icon: BrutalistIcon, label: 'Brutalist' }
+                                    { id: 'brutalist', icon: BrutalistIcon, label: 'Brutalist' },
+                                    { id: 'elegance', icon: EleganceIcon, label: 'Elegance' }
                                 ].map(({ id, icon: Icon, label }) => (
                                     <button
                                         key={id}

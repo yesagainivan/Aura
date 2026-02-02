@@ -35,8 +35,8 @@ export function generateBrutalist(hash: number, palette: Palette, size: number):
         `;
     }
 
-    // 3. Main Shapes (2-4 shapes)
-    const numShapes = 2 + Math.floor(getSeededRandom(hash + 1) * 3);
+    // 3. Main Shapes (1-3 shapes, less clustered)
+    const numShapes = 1 + Math.floor(getSeededRandom(hash + 1) * 2.5);
     const colors = [palette.primary, palette.secondary, palette.accent];
 
     for (let i = 0; i < numShapes; i++) {
@@ -45,7 +45,7 @@ export function generateBrutalist(hash: number, palette: Palette, size: number):
         const shapeType = getSeededRandom(seed + 1); // <0.3 rect, <0.6 circle, <1 star/poly
 
         // Random Position & Size
-        const s = size * (0.3 + getSeededRandom(seed + 2) * 0.4); // 30-70% size
+        const s = size * (0.2 + getSeededRandom(seed + 2) * 0.3); // 20-50% size (smaller to avoid crowd)
         const x = getSeededRandom(seed + 3) * (size - s);
         const y = getSeededRandom(seed + 4) * (size - s);
 

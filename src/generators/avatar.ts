@@ -4,6 +4,7 @@ import { generateGeometric } from './styles/geometric';
 import { generateGradient } from './styles/gradient';
 import { generateRetro } from './styles/retro';
 import { generateBrutalist } from './styles/brutalist';
+import { generateElegance } from './styles/elegance';
 import { AvatarOptions } from './types';
 import { createSvg } from './utils';
 
@@ -35,6 +36,9 @@ export function generateAvatar(input: string, options: AvatarOptions = {}): stri
             break;
         case 'brutalist':
             svgContent = generateBrutalist(hash, palette, size);
+            break;
+        case 'elegance':
+            svgContent = generateElegance(hash, palette, size);
             break;
         default:
             svgContent = generateGeometric(hash, palette, size);
