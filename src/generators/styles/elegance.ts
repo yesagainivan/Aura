@@ -21,6 +21,18 @@ const ELEGANT_PATHS = [
         d: "M50 50 C40 50 30 40 30 30 C30 20 40 10 50 10 C60 10 70 20 70 30 C70 40 60 50 50 50 Z M50 20 C45 20 40 25 40 30 C40 35 45 40 50 40 C55 40 60 35 60 30 C60 25 55 20 50 20 Z",
         viewBox: "0 0 100 100",
         type: "swirl"
+    },
+    // 4. StarFlower (Extracted from reference, low-coordinate)
+    {
+        d: "M47.387,47.36c2.975-1.919,7.728-2.523,15.645-3.176c-7.916-0.653-12.67-1.258-15.645-3.176c1.059-2.375,3.246-5.122,6.566-9.039c-3.917,3.32-6.664,5.507-9.039,6.566c-1.919-2.975-2.523-7.728-3.176-15.645c-0.653,7.916-1.258,12.67-3.176,15.645c-2.375-1.059-5.122-3.246-9.039-6.566c3.32,3.917,5.506,6.664,6.566,9.039c-2.975,1.919-7.728,2.523-15.645,3.176c7.916,0.653,12.67,1.258,15.645,3.176c-1.059,2.375-3.246,5.122-6.566,9.039c3.917-3.32,6.664-5.507,9.039-6.566c1.919,2.975,2.523,7.728,3.176,15.645c0.653-7.916,1.258-12.67,3.176-15.645c2.375,1.059,5.122,3.246,9.039,6.566C50.633,52.482,48.446,49.735,47.387,47.36z",
+        viewBox: "0 0 100 100",
+        type: "star"
+    },
+    // 5. Royal Lotus
+    {
+        d: "M50 20 C 60 20 70 40 80 45 C 90 50 80 60 70 70 C 60 80 50 90 50 90 C 50 90 40 80 30 70 C 20 60 10 50 20 45 C 30 40 40 20 50 20 Z",
+        viewBox: "0 0 100 100",
+        type: "lotus"
     }
 ];
 
@@ -41,8 +53,19 @@ export function generateElegance(hash: number, palette: Palette, size: number): 
 
     // -- Layer 1: Texture/Subtle Pattern (Implementation Quality: Delight) --
     // A very subtle ring or cross
-    if (getSeededRandom(hash + 1) > 0.5) {
+    // A very subtle ring, cross, or lattice
+    const texType = getSeededRandom(hash + 1);
+    if (texType > 0.7) {
         content += `<circle cx="${center}" cy="${center}" r="${size * 0.4}" fill="none" stroke="${palette.text}" stroke-width="${strokeWidth * 0.5}" opacity="0.1" />`;
+    } else if (texType > 0.4) {
+        // Lattice / Grid
+        const step = size / 8;
+        let lattice = '';
+        for (let i = 1; i < 8; i++) {
+            lattice += `<line x1="${i * step}" y1="0" x2="${i * step}" y2="${size}" stroke="${palette.text}" stroke-width="${strokeWidth * 0.2}" opacity="0.05" />`;
+            lattice += `<line x1="0" y1="${i * step}" x2="${size}" y2="${i * step}" stroke="${palette.text}" stroke-width="${strokeWidth * 0.2}" opacity="0.05" />`;
+        }
+        content += lattice;
     }
 
     // -- Layer 2: Main Motif --
@@ -56,7 +79,15 @@ export function generateElegance(hash: number, palette: Palette, size: number): 
         const tipY = -radius;
         const cpW = radius * (0.2 + getSeededRandom(hash + 3) * 0.3);
         const cpH = radius * (0.3 + getSeededRandom(hash + 4) * 0.3);
-        const d = `M 0 0 C ${cpW} ${-cpH}, ${cpW} ${tipY + cpH}, 0 ${tipY} C ${-cpW} ${tipY + cpH}, ${-cpW} ${-cpH}, 0 0`;
+
+        // Variation: Round vs Sharp petals
+        const isSharp = getSeededRandom(hash + 9) > 0.5;
+        let d = '';
+        if (isSharp) {
+            d = `M 0 0 Q ${cpW} ${-cpH} 0 ${tipY} Q ${-cpW} ${-cpH} 0 0`;
+        } else {
+            d = `M 0 0 C ${cpW} ${-cpH}, ${cpW} ${tipY + cpH}, 0 ${tipY} C ${-cpW} ${tipY + cpH}, ${-cpW} ${-cpH}, 0 0`;
+        }
 
         const groupContent = [];
         const useFill = getSeededRandom(hash + 5) > 0.3;
