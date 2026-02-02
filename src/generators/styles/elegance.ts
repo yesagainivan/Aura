@@ -1,5 +1,6 @@
 import { Palette } from '../../core/colors';
 import { getSeededRandom } from '../utils';
+import { ELEGANT_PATHS_EXT } from './elegant_paths';
 
 // Extracted paths from the Elegance.svg reference.
 // These are normalized to a roughly 0-100 coordinate system relative to their own center for easier composition.
@@ -33,7 +34,8 @@ const ELEGANT_PATHS = [
         d: "M50 20 C 60 20 70 40 80 45 C 90 50 80 60 70 70 C 60 80 50 90 50 90 C 50 90 40 80 30 70 C 20 60 10 50 20 45 C 30 40 40 20 50 20 Z",
         viewBox: "0 0 100 100",
         type: "lotus"
-    }
+    },
+    ...ELEGANT_PATHS_EXT
 ];
 
 export function generateElegance(hash: number, palette: Palette, size: number): string {
