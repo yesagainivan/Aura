@@ -24,18 +24,16 @@ export const AuraCard: React.FC<AuraCardProps> = ({
     avatarStyle,
     avatarOptions
 }) => {
-    const html = React.useMemo(() => {
-        const profile: ProfileData = { username, bio, tags };
-        const options: CardOptions = {
-            theme,
-            avatarOptions: {
-                size: avatarSize,
-                variant: avatarStyle, // Use variant
-                ...avatarOptions // Merge full options
-            }
-        };
-        return generateProfileCard(profile, options);
-    }, [username, bio, tags, theme, avatarSize, avatarStyle, avatarOptions]);
+    const profile: ProfileData = { username, bio, tags };
+    const options: CardOptions = {
+        theme,
+        avatarOptions: {
+            size: avatarSize,
+            variant: avatarStyle, // Use variant
+            ...avatarOptions // Merge full options
+        }
+    };
+    const html = generateProfileCard(profile, options);
 
     return (
         <div

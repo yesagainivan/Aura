@@ -15,10 +15,7 @@ export const AuraAvatar: React.FC<AuraAvatarProps> = ({
     style,
     ...options
 }) => {
-    const svg = React.useMemo(() =>
-        generateAvatar(username, options),
-        [username, options.size, options.variant, options.palette, options.colorMode, options.primaryColor]
-    );
+    const svg = generateAvatar(username, options);
 
     return (
         <div
