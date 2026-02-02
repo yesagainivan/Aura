@@ -29,7 +29,7 @@
   "description": "The Generative Identity Engine for Modern Apps",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yesagainivan/aura.git"
+    "url": "git+https://github.com/yesagainivan/Aura.git"
   },
   "publishConfig": {
     "access": "public"
