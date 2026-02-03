@@ -38,7 +38,7 @@ export function generateAvatar(input: string, options: AvatarOptions = {}): stri
             svgContent = generateBrutalist(hash, palette, size);
             break;
         case 'elegance':
-            svgContent = generateElegance(hash, palette, size);
+            svgContent = generateElegance(hash, palette, size, options.detail);
             break;
         default:
             svgContent = generateGeometric(hash, palette, size);

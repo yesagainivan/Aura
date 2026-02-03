@@ -1,5 +1,5 @@
 import { Palette } from '../../core/colors';
-import { getSeededRandom } from '../utils';
+import { getSeededRandom } from '../utils'; // Ensure this is imported
 import { ELEGANT_PATHS_EXT } from './elegant_paths';
 
 // Extracted paths from the Elegance.svg reference.
@@ -38,7 +38,22 @@ const ELEGANT_PATHS = [
     ...ELEGANT_PATHS_EXT
 ];
 
-export function generateElegance(hash: number, palette: Palette, size: number): string {
+/**
+ * Dispatcher function for Elegance style.
+ * Defaults to 'detailed' mode.
+ */
+export function generateElegance(hash: number, palette: Palette, size: number, detail: 'basic' | 'detailed' = 'detailed'): string {
+    if (detail === 'basic') {
+        return generateEleganceBasic(hash, palette, size);
+    }
+    return generateEleganceDetailed(hash, palette, size);
+}
+
+/**
+ * Original "Basic" implementation.
+ * Simple Radial Bloom or Emblem logic.
+ */
+function generateEleganceBasic(hash: number, palette: Palette, size: number): string {
     // Strategy:
     // 1. Determine Composition (Radial Bloom, Emblem, or Pattern)
     // 2. Select Elements (Procedural or Extracted Assets)
@@ -161,6 +176,180 @@ export function generateElegance(hash: number, palette: Palette, size: number): 
         ];
         content += corners.map(d => `<path d="${d}" fill="none" stroke="${palette.secondary}" stroke-width="${strokeWidth * 1.5}" />`).join('');
     }
+
+    return content;
+}
+
+/**
+ * Detailed / Intricate implementation.
+ * Supports Emblem, Mandala, and Radial Bloom with complex compositions.
+ */
+function generateEleganceDetailed(hash: number, palette: Palette, size: number): string {
+    const center = size / 2;
+    const strokeWidth = Math.max(1, size / 150);
+
+    // Seeded random helpers
+    let rngState = hash;
+    const random = () => {
+        const x = Math.sin(rngState++) * 10000;
+        return x - Math.floor(x);
+    };
+
+    // Pick a composition style
+    const compositionType = random(); // 0.0-0.3: Emblem, 0.3-0.7: Mandala, 0.7-1.0: Radial Bloom
+
+    let content = '';
+
+    // -- Background --
+    content += `<rect width="${size}" height="${size}" fill="${palette.background}" />`;
+
+    // -- Texture --
+    if (random() > 0.5) {
+        const steps = 4 + Math.floor(random() * 4) * 2;
+        const radiusStep = (size * 0.6) / steps;
+        for (let i = 1; i <= steps; i++) {
+            const r = i * radiusStep;
+            const opacity = 0.05 + random() * 0.1;
+            content += `<circle cx="${center}" cy="${center}" r="${r}" fill="none" stroke="${palette.text}" stroke-width="${strokeWidth * 0.5}" opacity="${opacity}" />`;
+        }
+    }
+
+    // Helper to get a random path
+    const getRandomPath = () => ELEGANT_PATHS[Math.floor(random() * ELEGANT_PATHS.length)];
+
+    if (compositionType < 0.3) {
+        // --- EMBLEM: Central complex shape with possible mirroring ---
+        const shape = getRandomPath();
+        const baseScale = (size * 0.45) / 50;
+
+        // Mirroring?
+        const mirror = random() > 0.5;
+
+        if (mirror) {
+            // Left/Right mirror (Flanking)
+            const d = shape.d;
+
+            // Translate(-50,-50) centers the 100x100 path at local 0,0
+            // Translate(25, 0) moves it to the right
+            // Scale and Translate to canvas center
+
+            // Right Side
+            content += `<g transform="translate(${center}, ${center}) scale(${baseScale}) translate(20, 0) translate(-50, -50)">
+                <path d="${d}" fill="${palette.primary}" stroke="${palette.text}" stroke-width="0.5" />
+            </g>`;
+
+            // Left Side (Mirrored)
+            content += `<g transform="translate(${center}, ${center}) scale(${-baseScale}, ${baseScale}) translate(20, 0) translate(-50, -50)">
+                <path d="${d}" fill="${palette.primary}" stroke="${palette.text}" stroke-width="0.5" opacity="0.9" />
+            </g>`;
+
+            // Central small accent connecting them
+            content += `<circle cx="${center}" cy="${center}" r="${size * 0.03}" fill="${palette.accent}" />`;
+
+        } else {
+            // Single centerpiece
+            content += `<g transform="translate(${center}, ${center}) scale(${baseScale}) translate(-50, -50)">
+                <path d="${shape.d}" fill="${palette.primary}" stroke="${palette.text}" stroke-width="0.5" />
+            </g>`;
+        }
+
+    } else if (compositionType < 0.7) {
+        // --- MANDALA: Layered rings of symbols ---
+        const layers = 2 + Math.floor(random() * 3); // 2 to 4 layers
+
+        for (let l = 0; l < layers; l++) {
+            const layerShape = getRandomPath();
+            const count = [4, 6, 8, 12][Math.floor(random() * 4)];
+            const dist = (size * 0.1) + (l * (size * 0.12));
+            const scale = (size * 0.15) / 100; // Smaller elements
+            const layerColor = (l % 2 === 0) ? palette.primary : palette.secondary;
+
+            for (let i = 0; i < count; i++) {
+                const angle = (360 / count) * i;
+                content += `<g transform="translate(${center}, ${center}) rotate(${angle}) translate(0, ${-dist}) scale(${scale}) translate(-50,-50)">
+                    <path d="${layerShape.d}" fill="${layerColor}" stroke="${palette.text}" stroke-width="2" />
+                </g>
+                </g>`;
+            }
+        }
+
+        // Center dot
+        content += `<circle cx="${center}" cy="${center}" r="${size * 0.06}" fill="${palette.accent}" />`;
+
+    } else {
+        // --- RADIAL BLOOM: Procedural + Ornament ---
+        const petals = 6 + Math.floor(random() * 4) * 2;
+        const outerR = size * 0.35;
+        const innerR = size * 0.1;
+
+        const cpW = (outerR - innerR) * 0.5;
+
+        // Procedural petals in background
+        for (let i = 0; i < petals; i++) {
+            const angle = (360 / petals) * i;
+            // Draw petal
+            content += `<g transform="translate(${center}, ${center}) rotate(${angle})">
+                <path d="M 0 ${-innerR} Q ${cpW} ${-outerR} 0 ${-outerR} Q ${-cpW} ${-outerR} 0 ${-innerR}" fill="${palette.primary}" fill-opacity="0.3" stroke="none" />
+            </g>`;
+        }
+
+        // Ornament overlaid
+        const ornament = getRandomPath();
+        const ornScale = (size * 0.1) / 100;
+        const ornDist = size * 0.25;
+
+        for (let i = 0; i < petals; i++) {
+            const angle = (360 / petals) * i + (180 / petals); // Offset
+            content += `<g transform="translate(${center}, ${center}) rotate(${angle}) translate(0, ${-ornDist}) scale(${ornScale}) translate(-50,-50)">
+                <path d="${ornament.d}" fill="${palette.secondary}" />
+            </g>`;
+        }
+    }
+
+    // -- Frame / Border (Polished look) --
+    // We favor circular frames to fit standard avatars, but occasionally use inscribed ornaments.
+
+    const frameType = random();
+
+    if (frameType < 0.4) {
+        // Simple Double Ring
+        content += `
+            <circle cx="${center}" cy="${center}" r="${size * 0.48}" fill="none" stroke="${palette.text}" stroke-width="${strokeWidth}" opacity="0.6" />
+            <circle cx="${center}" cy="${center}" r="${size * 0.46}" fill="none" stroke="${palette.text}" stroke-width="${strokeWidth * 0.5}" opacity="0.3" />
+        `;
+    } else if (frameType < 0.7) {
+        // Dashed / Decorated Ring
+        const dashArray = `${size * 0.05} ${size * 0.05}`;
+        content += `
+            <circle cx="${center}" cy="${center}" r="${size * 0.47}" fill="none" stroke="${palette.secondary}" stroke-width="${strokeWidth * 1.5}" stroke-dasharray="${dashArray}" opacity="0.8" />
+        `;
+    } else if (frameType < 0.9) {
+        // Inscribed Square Accents (Corner pieces, but strictly inside the circle)
+        // The inscribed square of a circle with radius R has a half-side of R/sqrt(2).
+        // R = size/2. Or ~0.35 * size from center.
+        // Center is 0.5. 0.5 +/- 0.35 is 0.15 and 0.85.
+
+        const ornament = getRandomPath();
+        const cScale = (size * 0.12) / 100; // Small
+        const inset = size * 0.18; // Safe zone (approx inside inscribed square)
+
+        const safeCorners = [
+            `translate(${inset}, ${inset}) scale(${cScale}) translate(-50, -50)`,
+            `translate(${size - inset}, ${inset}) scale(-${cScale}, ${cScale}) translate(-50, -50)`,
+            `translate(${size - inset}, ${size - inset}) scale(-${cScale}, -${cScale}) translate(-50, -50)`,
+            `translate(${inset}, ${size - inset}) scale(${cScale}, -${cScale}) translate(-50, -50)`
+        ];
+
+        safeCorners.forEach(t => {
+            content += `<g transform="${t}">
+                <path d="${ornament.d}" fill="${palette.accent}" />
+            </g>`;
+        });
+
+        // Add a subtle ring behind to bound them
+        content += `<circle cx="${center}" cy="${center}" r="${size * 0.48}" fill="none" stroke="${palette.text}" stroke-width="${strokeWidth}" opacity="0.2" />`;
+    }
+    // Else: No frame (clean look)
 
     return content;
 }

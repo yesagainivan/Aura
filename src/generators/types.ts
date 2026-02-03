@@ -10,6 +10,7 @@ export interface AvatarOptions {
     // User preferences
     colorMode?: 'light' | 'dark';
     primaryColor?: string; // Hex code
+    detail?: 'basic' | 'detailed'; // Complexity level for supported styles (e.g. elegance)
 }
 
 export interface GeneratorResult {
